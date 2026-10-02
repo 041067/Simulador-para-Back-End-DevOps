@@ -12,7 +12,7 @@ COPY ["src/BackOps.Infrastructure/BackOps.Infrastructure.csproj", "src/BackOps.I
 COPY ["src/BackOps.Contracts/BackOps.Contracts.csproj", "src/BackOps.Contracts/"]
 COPY ["apps/api/BackOps.Api.csproj", "apps/api/"]
 COPY ["apps/worker/BackOps.Worker.csproj", "apps/worker/"]
-RUN dotnet restore "BackOpsSimulator.slnx"
+RUN dotnet restore "apps/api/BackOps.Api.csproj"
 
 COPY . .
 WORKDIR "/src/apps/api"
