@@ -45,6 +45,12 @@ public class BackOpsDbContext : DbContext
                 p.Property(m => m.Amount).HasColumnName("PriceAmount").HasPrecision(18, 2);
                 p.Property(m => m.Currency).HasColumnName("PriceCurrency").HasMaxLength(3);
             });
+            entity.Property(e => e.IdempotencyKey)
+                .HasConversion(
+                    v => v.Value,
+                    v => IdempotencyKey.FromString(v))
+                .HasMaxLength(128)
+                .IsRequired();
             entity.HasIndex(e => e.Code).IsUnique();
             entity.HasIndex(e => e.IdempotencyKey).IsUnique();
             entity.HasIndex(e => e.EventId);
@@ -59,6 +65,12 @@ public class BackOpsDbContext : DbContext
                 p.Property(m => m.Amount).HasColumnName("TotalAmountAmount").HasPrecision(18, 2);
                 p.Property(m => m.Currency).HasColumnName("TotalAmountCurrency").HasMaxLength(3);
             });
+            entity.Property(e => e.IdempotencyKey)
+                .HasConversion(
+                    v => v.Value,
+                    v => IdempotencyKey.FromString(v))
+                .HasMaxLength(128)
+                .IsRequired();
             entity.HasIndex(e => e.IdempotencyKey).IsUnique();
             entity.HasIndex(e => e.EventId);
             entity.HasIndex(e => e.UserId);
@@ -84,6 +96,12 @@ public class BackOpsDbContext : DbContext
                 p.Property(m => m.Amount).HasColumnName("AmountAmount").HasPrecision(18, 2);
                 p.Property(m => m.Currency).HasColumnName("AmountCurrency").HasMaxLength(3);
             });
+            entity.Property(e => e.IdempotencyKey)
+                .HasConversion(
+                    v => v.Value,
+                    v => IdempotencyKey.FromString(v))
+                .HasMaxLength(128)
+                .IsRequired();
             entity.Property(e => e.CardToken).HasMaxLength(128);
             entity.Property(e => e.PayerEmail).HasMaxLength(256);
             entity.Property(e => e.PayerName).HasMaxLength(200);
