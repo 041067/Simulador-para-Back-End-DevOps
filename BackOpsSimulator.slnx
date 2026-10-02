@@ -1,0 +1,28 @@
+<Solution>
+  <Folder Name="/apps/" />
+  <Folder Name="/apps/api/">
+    <Project Path="apps/api/BackOps.Api.csproj" />
+  </Folder>
+  <Folder Name="/apps/worker/">
+    <Project Path="apps/worker/BackOps.Worker.csproj" />
+  </Folder>
+  <Folder Name="/src/">
+    <Project Path="src/BackOps.Application/BackOps.Application.csproj" />
+    <Project Path="src/BackOps.Contracts/BackOps.Contracts.csproj" />
+    <Project Path="src/BackOps.Domain/BackOps.Domain.csproj" />
+    <Project Path="src/BackOps.Infrastructure/BackOps.Infrastructure.csproj" />
+  </Folder>
+  <Folder Name="/tests/" />
+  <Folder Name="/tests/ArchitectureTests/">
+    <Project Path="tests/ArchitectureTests/BackOps.ArchitectureTests.csproj" />
+  </Folder>
+  <Folder Name="/tests/ContractTests/">
+    <Project Path="tests/ContractTests/BackOps.ContractTests.csproj" />
+  </Folder>
+  <Folder Name="/tests/IntegrationTests/">
+    <Project Path="tests/IntegrationTests/BackOps.IntegrationTests.csproj" />
+  </Folder>
+  <Folder Name="/tests/UnitTests/">
+    <Project Path="tests/UnitTests/BackOps.UnitTests.csproj" />
+  </Folder>
+</Solution>
