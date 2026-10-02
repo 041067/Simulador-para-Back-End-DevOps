@@ -1,5 +1,7 @@
 namespace BackOps.Domain.Interfaces;
 
+using BackOps.Domain.Enums;
+
 using BackOps.Domain.ValueObjects;
 
 public interface IMessageBus

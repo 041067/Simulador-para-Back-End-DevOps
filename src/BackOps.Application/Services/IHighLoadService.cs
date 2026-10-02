@@ -6,6 +6,7 @@ using BackOps.Domain.ValueObjects;
 using BackOps.Domain.Enums;
 using BackOps.Domain.Exceptions;
 using BackOps.Application.Common;
+using BackOps.Application.Commands;
 
 public interface IHighLoadService
 {

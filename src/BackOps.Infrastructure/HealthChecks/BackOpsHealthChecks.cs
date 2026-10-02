@@ -5,6 +5,7 @@ using BackOps.Domain.Interfaces;
 using StackExchange.Redis;
 using Microsoft.EntityFrameworkCore;
 using BackOps.Infrastructure.Persistence;
+using BackOps.Domain.Enums;
 
 public class DatabaseHealthCheck : IHealthCheck
 {

@@ -3,7 +3,6 @@ namespace BackOps.Application.Commands;
 using BackOps.Application.Common;
 using BackOps.Domain.ValueObjects;
 using BackOps.Domain.Enums;
-using MediatR;
 
 public record CreateEventCommand(
     string Name,

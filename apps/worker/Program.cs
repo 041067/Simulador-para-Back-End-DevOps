@@ -1,24 +1,32 @@
-using BackOps.Api.Middleware;
 using BackOps.Application;
+using BackOps.Application.Services;
+using BackOps.Domain.Interfaces;
 using BackOps.Infrastructure;
 using BackOps.Infrastructure.HealthChecks;
+using BackOps.Infrastructure.Messaging;
 using BackOps.Infrastructure.Observability;
 using BackOps.Infrastructure.Persistence;
+using BackOps.Infrastructure.Persistence.Repositories;
 using BackOps.Infrastructure.Resilience;
+using BackOps.Worker.Services;
+using FluentValidation;
+using FluentValidation.AspNetCore;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Options;
 using Serilog;
+using StackExchange.Redis;
 
 var builder = Host.CreateApplicationBuilder(args);
 
-builder.Services.AddSerilog((context, services, configuration) =>
+builder.Services.AddSerilog((services, configuration) =>
 {
     configuration
-        .ReadFrom.Configuration(context.Configuration)
+        .ReadFrom.Configuration(builder.Configuration)
         .ReadFrom.Services(services)
         .Enrich.FromLogContext()
         .Enrich.WithProperty("Application", "BackOps.Worker")
         .WriteTo.Console()
-        .WriteTo.Seq(context.Configuration["Seq:Url"] ?? "http://localhost:5341");
+        .WriteTo.Seq(builder.Configuration["Seq:Url"] ?? "http://localhost:5341");
 });
 
 builder.Services.AddDbContext<BackOpsDbContext>(options =>
@@ -53,7 +61,7 @@ builder.Services.AddMediatR(cfg =>
 });
 
 builder.Services.AddFluentValidationAutoValidation();
-builder.Services.AddValidatorsFromAssembly(typeof(BackOps.Application.Validators.CommandValidators).Assembly);
+builder.Services.AddValidatorsFromAssembly(typeof(BackOps.Application.Validators.CreateEventCommandValidator).Assembly);
 
 builder.Services.AddScoped<IEventRepository, EventRepository>();
 builder.Services.AddScoped<ITicketRepository, TicketRepository>();

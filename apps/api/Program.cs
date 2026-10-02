@@ -4,10 +4,18 @@ using BackOps.Infrastructure;
 using BackOps.Infrastructure.HealthChecks;
 using BackOps.Infrastructure.Observability;
 using BackOps.Infrastructure.Persistence;
+using BackOps.Infrastructure.Persistence.Repositories;
 using BackOps.Infrastructure.Resilience;
+using BackOps.Infrastructure.Messaging;
+using BackOps.Application.Services;
+using BackOps.Domain.Interfaces;
+using FluentValidation;
+using FluentValidation.AspNetCore;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.OpenApi.Models;
+using Microsoft.Extensions.Options;
+using Microsoft.OpenApi;
 using Serilog;
+using StackExchange.Redis;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -73,7 +81,7 @@ builder.Services.AddMediatR(cfg =>
 });
 
 builder.Services.AddFluentValidationAutoValidation();
-builder.Services.AddValidatorsFromAssembly(typeof(BackOps.Application.Validators.CommandValidators).Assembly);
+builder.Services.AddValidatorsFromAssembly(typeof(BackOps.Application.Validators.CreateEventCommandValidator).Assembly);
 
 builder.Services.AddScoped<IEventRepository, EventRepository>();
 builder.Services.AddScoped<ITicketRepository, TicketRepository>();

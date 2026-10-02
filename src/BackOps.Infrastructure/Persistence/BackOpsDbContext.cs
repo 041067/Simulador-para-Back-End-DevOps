@@ -29,10 +29,7 @@ public class BackOpsDbContext : DbContext
             entity.HasKey(e => e.Id);
             entity.Property(e => e.Name).IsRequired().HasMaxLength(200);
             entity.Property(e => e.Description).HasMaxLength(2000);
-            entity.Property(e => e.TicketPrice).HasConversion(
-                v => v.Amount,
-                v => Money.FromDecimal(v, "BRL"));
-            entity.OwnsOne(e => e.TicketPrice, p =>
+            entity.ComplexProperty(e => e.TicketPrice, p =>
             {
                 p.Property(m => m.Amount).HasColumnName("TicketPriceAmount").HasPrecision(18, 2);
                 p.Property(m => m.Currency).HasColumnName("TicketPriceCurrency").HasMaxLength(3);
@@ -43,10 +40,7 @@ public class BackOpsDbContext : DbContext
         {
             entity.HasKey(e => e.Id);
             entity.Property(e => e.Code).IsRequired().HasMaxLength(20);
-            entity.Property(e => e.Price).HasConversion(
-                v => v.Amount,
-                v => Money.FromDecimal(v, "BRL"));
-            entity.OwnsOne(e => e.Price, p =>
+            entity.ComplexProperty(e => e.Price, p =>
             {
                 p.Property(m => m.Amount).HasColumnName("PriceAmount").HasPrecision(18, 2);
                 p.Property(m => m.Currency).HasColumnName("PriceCurrency").HasMaxLength(3);
@@ -60,10 +54,7 @@ public class BackOpsDbContext : DbContext
         modelBuilder.Entity<Purchase>(entity =>
         {
             entity.HasKey(e => e.Id);
-            entity.Property(e => e.TotalAmount).HasConversion(
-                v => v.Amount,
-                v => Money.FromDecimal(v, "BRL"));
-            entity.OwnsOne(e => e.TotalAmount, p =>
+            entity.ComplexProperty(e => e.TotalAmount, p =>
             {
                 p.Property(m => m.Amount).HasColumnName("TotalAmountAmount").HasPrecision(18, 2);
                 p.Property(m => m.Currency).HasColumnName("TotalAmountCurrency").HasMaxLength(3);
@@ -88,10 +79,7 @@ public class BackOpsDbContext : DbContext
         {
             entity.HasKey(e => e.Id);
             entity.Property(e => e.ExternalReference).IsRequired().HasMaxLength(50);
-            entity.Property(e => e.Amount).HasConversion(
-                v => v.Amount,
-                v => Money.FromDecimal(v, "BRL"));
-            entity.OwnsOne(e => e.Amount, p =>
+            entity.ComplexProperty(e => e.Amount, p =>
             {
                 p.Property(m => m.Amount).HasColumnName("AmountAmount").HasPrecision(18, 2);
                 p.Property(m => m.Currency).HasColumnName("AmountCurrency").HasMaxLength(3);
@@ -143,13 +131,9 @@ public class BackOpsDbContext : DbContext
 
         foreach (var entry in entries)
         {
-            if (entry.State == EntityState.Added)
+            if (entry.State == EntityState.Modified)
             {
-                entry.Entity.CreatedAt = DateTime.UtcNow;
-            }
-            else
-            {
-                entry.Entity.UpdatedAt = DateTime.UtcNow;
+                entry.Entity.UpdateTimestamp();
             }
         }
 

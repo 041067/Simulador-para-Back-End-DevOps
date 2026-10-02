@@ -1,5 +1,6 @@
 namespace BackOps.Infrastructure.Observability;
 
+using System.Diagnostics.Metrics;
 using OpenTelemetry.Metrics;
 using OpenTelemetry.Trace;
 using OpenTelemetry.Resources;

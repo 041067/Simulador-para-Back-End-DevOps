@@ -3,7 +3,6 @@ namespace BackOps.Application.Queries;
 using BackOps.Application.Common;
 using BackOps.Application.DTOs;
 using BackOps.Domain.Enums;
-using MediatR;
 
 public record GetEventQuery(Guid Id) : IQuery<EventDto>;
 public record GetEventsQuery(bool ActiveOnly = true) : IQuery<IReadOnlyList<EventDto>>;

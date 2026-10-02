@@ -3,6 +3,7 @@ namespace BackOps.Infrastructure.Persistence.Repositories;
 using Microsoft.EntityFrameworkCore;
 using BackOps.Domain.Interfaces;
 using BackOps.Domain.Entities;
+using BackOps.Domain.Enums;
 using BackOps.Domain.ValueObjects;
 
 public class TicketRepository : ITicketRepository

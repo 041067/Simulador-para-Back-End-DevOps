@@ -25,8 +25,8 @@ public class WebhooksController : ControllerBase
     {
         if (paymentId.HasValue)
         {
-            var result = await _mediator.Send(new GetWebhooksByPaymentQuery(paymentId.Value));
-            return Ok(result);
+            var paymentWebhooks = await _mediator.Send(new GetWebhooksByPaymentQuery(paymentId.Value));
+            return Ok(paymentWebhooks);
         }
 
         var result = await _mediator.Send(new GetPendingWebhooksQuery());

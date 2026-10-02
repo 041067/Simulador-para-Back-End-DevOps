@@ -42,7 +42,7 @@ public class PaymentService : IPaymentService
     {
         var idempotencyKey = IdempotencyKey.FromString(command.IdempotencyKey);
 
-        return await _idempotencyService.ExecuteAsync(idempotencyKey, async ct =>
+        var idempotencyResult = await _idempotencyService.ExecuteAsync(idempotencyKey, async ct =>
         {
             var payment = new Payment(
                 Money.FromDecimal(command.Amount, command.Currency),
@@ -57,8 +57,15 @@ public class PaymentService : IPaymentService
 
             _logger.LogInformation("Created payment {PaymentId} with idempotency key {IdempotencyKey}", payment.Id, idempotencyKey);
 
-            return Result<Guid>.Success(payment.Id);
+            return payment.Id;
         }, cancellationToken);
+
+        if (idempotencyResult.IsNew)
+            return Result<Guid>.Success(idempotencyResult.Result);
+
+        return idempotencyResult.ExistingEntityId is { } existingPaymentId
+            ? Result<Guid>.Success(existingPaymentId)
+            : Result<Guid>.Failure("Idempotency operation completed without a payment ID", "IDEMPOTENCY_RESULT_INVALID");
     }
 
     public async Task<Result> ProcessPaymentAsync(Guid paymentId, CancellationToken cancellationToken = default)

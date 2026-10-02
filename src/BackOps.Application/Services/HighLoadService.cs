@@ -100,7 +100,7 @@ public class HighLoadService : IHighLoadService
     {
         var idempotencyKey = IdempotencyKey.FromString(command.IdempotencyKey);
 
-        return await _idempotencyService.ExecuteAsync(idempotencyKey, async ct =>
+        var idempotencyResult = await _idempotencyService.ExecuteAsync(idempotencyKey, async ct =>
         {
             var @event = await _eventRepository.GetByIdAsync(command.EventId, ct);
             if (@event == null)
@@ -123,8 +123,15 @@ public class HighLoadService : IHighLoadService
 
             _logger.LogInformation("Created purchase {PurchaseId} for event {EventId}", purchase.Id, command.EventId);
 
-            return Result<Guid>.Success(purchase.Id);
+            return purchase.Id;
         }, cancellationToken);
+
+        if (idempotencyResult.IsNew)
+            return Result<Guid>.Success(idempotencyResult.Result);
+
+        return idempotencyResult.ExistingEntityId is { } existingPurchaseId
+            ? Result<Guid>.Success(existingPurchaseId)
+            : Result<Guid>.Failure("Idempotency operation completed without a purchase ID", "IDEMPOTENCY_RESULT_INVALID");
     }
 
     public async Task<Result> ProcessPurchaseAsync(Guid purchaseId, CancellationToken cancellationToken = default)

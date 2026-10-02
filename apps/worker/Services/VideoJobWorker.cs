@@ -62,7 +62,7 @@ public class VideoJobWorker : BackgroundService
             await highLoadService.AssignVideoJobAsync(job.Id, worker.Name, cancellationToken);
             await highLoadService.WorkerStartJobAsync(worker.Id, job.Id.ToString(), cancellationToken);
 
-            Metrics.WorkerJobsTotal.Add(1, new KeyValuePair<string, object>("worker", worker.Name));
+            Metrics.WorkerJobsTotal.Add(1, new KeyValuePair<string, object?>("worker", worker.Name));
 
             _ = Task.Run(async () =>
             {
@@ -78,7 +78,7 @@ public class VideoJobWorker : BackgroundService
         }
     }
 
-    private async Task SimulateVideoProcessingAsync(VideoJob job, WorkerStatusDto worker, IServiceProvider serviceProvider, CancellationToken cancellationToken)
+    private async Task SimulateVideoProcessingAsync(VideoJob job, Worker worker, IServiceProvider serviceProvider, CancellationToken cancellationToken)
     {
         var processingTime = TimeSpan.FromSeconds(Random.Shared.Next(1, 10));
         await Task.Delay(processingTime, cancellationToken);
@@ -92,13 +92,13 @@ public class VideoJobWorker : BackgroundService
         {
             await highLoadService.CompleteVideoJobAsync(job.Id, cancellationToken);
             await highLoadService.WorkerCompleteJobAsync(worker.Id, true, cancellationToken);
-            Metrics.WorkerProcessingDuration.Record(processingTime.TotalSeconds, new KeyValuePair<string, object>("worker", worker.Name));
+            Metrics.WorkerProcessingDuration.Record(processingTime.TotalSeconds, new KeyValuePair<string, object?>("worker", worker.Name));
         }
         else
         {
             await highLoadService.FailVideoJobAsync(job.Id, "Simulated processing failure", cancellationToken);
             await highLoadService.WorkerCompleteJobAsync(worker.Id, false, cancellationToken);
-            Metrics.WorkerJobsFailed.Add(1, new KeyValuePair<string, object>("worker", worker.Name));
+            Metrics.WorkerJobsFailed.Add(1, new KeyValuePair<string, object?>("worker", worker.Name));
         }
     }
 }

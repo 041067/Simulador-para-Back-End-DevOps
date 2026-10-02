@@ -1,5 +1,7 @@
 namespace BackOps.Domain.Exceptions;
 
+using BackOps.Domain.Enums;
+
 public class DomainException : Exception
 {
     public string Code { get; }
