@@ -34,7 +34,6 @@ public sealed class HighLoadQueryHandlers :
     private readonly IVideoJobRepository _videoJobs;
     private readonly IWorkerRepository _workers;
     private readonly IPaymentRepository _payments;
-    private readonly ITicketRepository _tickets;
     private readonly IQueueProvider _queue;
     private readonly IEnumerable<ICircuitBreaker> _circuitBreakers;
 
@@ -44,7 +43,6 @@ public sealed class HighLoadQueryHandlers :
         IVideoJobRepository videoJobs,
         IWorkerRepository workers,
         IPaymentRepository payments,
-        ITicketRepository tickets,
         IQueueProvider queue,
         IEnumerable<ICircuitBreaker> circuitBreakers)
     {
@@ -53,7 +51,6 @@ public sealed class HighLoadQueryHandlers :
         _videoJobs = videoJobs;
         _workers = workers;
         _payments = payments;
-        _tickets = tickets;
         _queue = queue;
         _circuitBreakers = circuitBreakers;
     }
@@ -326,9 +323,9 @@ public sealed class HighLoadQueryHandlers :
         var breakers = _circuitBreakers.Select(x => new CircuitBreakerStatusDto(
             x.Name,
             x.State.ToString().ToLowerInvariant(),
-            x.FailureCount,
-            x.SuccessCount,
-            x.LastStateChange)).ToArray();
+            0,
+            0,
+            null)).ToArray();
 
         return Result<MetricsSnapshotDto>.Success(new MetricsSnapshotDto(
             DateTime.UtcNow,
