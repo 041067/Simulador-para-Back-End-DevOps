@@ -58,10 +58,10 @@ jobs:
           cache-dependency-path: apps/web/package-lock.json
 
       - name: Restore .NET dependencies
-        run: dotnet restore BackOpsSimulator.sln
+        run: dotnet restore BackOpsSimulator.slnx
 
       - name: Build .NET solution
-        run: dotnet build BackOpsSimulator.sln --no-restore -c Release
+        run: dotnet build BackOpsSimulator.slnx --no-restore -c Release
 
       - name: Run unit tests
         run: dotnet test tests/UnitTests/BackOps.UnitTests.csproj --no-build -c Release --logger "trx;LogFileName=unit-tests.trx" --collect:"XPlat Code Coverage"
