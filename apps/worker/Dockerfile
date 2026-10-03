@@ -5,14 +5,14 @@ ENV ASPNETCORE_URLS=http://0.0.0.0:10000
 
 FROM mcr.microsoft.com/dotnet/sdk:9.0 AS build
 WORKDIR /src
-COPY ["BackOpsSimulator.sln", "."]
+COPY ["BackOpsSimulator.slnx", "."]
 COPY ["src/BackOps.Domain/BackOps.Domain.csproj", "src/BackOps.Domain/"]
 COPY ["src/BackOps.Application/BackOps.Application.csproj", "src/BackOps.Application/"]
 COPY ["src/BackOps.Infrastructure/BackOps.Infrastructure.csproj", "src/BackOps.Infrastructure/"]
 COPY ["src/BackOps.Contracts/BackOps.Contracts.csproj", "src/BackOps.Contracts/"]
 COPY ["apps/api/BackOps.Api.csproj", "apps/api/"]
 COPY ["apps/worker/BackOps.Worker.csproj", "apps/worker/"]
-RUN dotnet restore "BackOpsSimulator.sln"
+RUN dotnet restore "apps/worker/BackOps.Worker.csproj"
 
 COPY . .
 WORKDIR "/src/apps/worker"
