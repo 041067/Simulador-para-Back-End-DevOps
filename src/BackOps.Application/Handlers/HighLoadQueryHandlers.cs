@@ -297,11 +297,22 @@ public sealed class HighLoadQueryHandlers :
 
     public async Task<Result<MetricsSnapshotDto>> Handle(GetMetricsSnapshotQuery request, CancellationToken ct)
     {
-        var purchases = await _purchases.GetAllAsync(ct);
-        var videoJobs = await _videoJobs.GetAllAsync(ct);
-        var payments = await _payments.GetAllAsync(ct);
-        var workers = await _workers.GetAllAsync(ct);
-        var queueDepth = await _videoJobs.GetQueueDepthAsync(ct);
+        // Snapshot é observabilidade: uma falha em um componente não pode transformar
+        // a consulta inteira em HTTP 500. Cada fonte é isolada individualmente.
+        var purchases = await TryGetAsync(() => _purchases.GetAllAsync(ct));
+        var videoJobs = await TryGetAsync(() => _videoJobs.GetAllAsync(ct));
+        var payments = await TryGetAsync(() => _payments.GetAllAsync(ct));
+        var workers = await TryGetAsync(() => _workers.GetAllAsync(ct));
+
+        long queueDepth = 0;
+        try
+        {
+            queueDepth = await _videoJobs.GetQueueDepthAsync(ct);
+        }
+        catch
+        {
+            // PostgreSQL indisponível: mantém o snapshot disponível com o valor padrão.
+        }
 
         var total = purchases.Count + videoJobs.Count + payments.Count;
         var failed = purchases.Count(x => x.Status == PurchaseStatus.Failed)
@@ -337,6 +348,18 @@ public sealed class HighLoadQueryHandlers :
             queueDepth,
             workers.Count(x => x.Status == WorkerStatus.Processing),
             breakers));
+    }
+
+    private static async Task<IReadOnlyList<T>> TryGetAsync<T>(Func<Task<IReadOnlyList<T>>> operation)
+    {
+        try
+        {
+            return await operation();
+        }
+        catch
+        {
+            return Array.Empty<T>();
+        }
     }
 
     private static EventDto ToDto(Event x) => new(
